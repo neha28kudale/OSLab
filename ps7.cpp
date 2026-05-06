@@ -1,94 +1,122 @@
 #include <iostream>
+#include <climits>
 using namespace std;
 
-// Display result
-void display(int alloc[], int n) {
-    cout << "\nProcess\tBlock\n";
-    for(int i = 0; i < n; i++) {
-        if(alloc[i] != -1)
-            cout << "P" << i << "\tB" << alloc[i] << endl;
+void printResult(string name, int alloc[], int n) {
+    cout << "\n" << name << "\n";
+    for (int i = 0; i < n; i++) {
+        cout << "P" << i << " -> ";
+        if (alloc[i] != -1)
+            cout << "B" << alloc[i] + 1 << endl;
         else
-            cout << "P" << i << "\tNot Allocated\n";
+            cout << "Not Allocated" << endl;
     }
 }
 
-// First Fit
-void firstFit(int blocks[], int m, int process[], int n) {
-    int alloc[10];
-    for(int i = 0; i < n; i++) alloc[i] = -1;
+void printRemaining(int block[], int m) {
+    cout << "\nRemaining Memory Blocks:\n";
+    for (int i = 0; i < m; i++) {
+        cout << "B" << i + 1 << " -> " << block[i] << endl;
+    }
+}
 
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < m; j++) {
-            if(blocks[j] >= process[i]) {
+// ---------------- FIRST FIT ----------------
+void firstFit(int block[], int m, int process[], int n) {
+    int alloc[n];
+    int temp[m];
+
+    for (int i = 0; i < m; i++) temp[i] = block[i];
+    for (int i = 0; i < n; i++) alloc[i] = -1;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (temp[j] >= process[i]) {
                 alloc[i] = j;
-                blocks[j] -= process[i];
+                temp[j] -= process[i];
                 break;
             }
         }
     }
 
-    cout << "\n--- First Fit ---";
-    display(alloc, n);
+    printResult("First Fit", alloc, n);
+    printRemaining(temp, m);
 }
 
-// Best Fit
-void bestFit(int blocks[], int m, int process[], int n) {
-    int alloc[10];
-    for(int i = 0; i < n; i++) alloc[i] = -1;
+// ---------------- BEST FIT ----------------
+void bestFit(int block[], int m, int process[], int n) {
+    int alloc[n];
+    int temp[m];
 
-    for(int i = 0; i < n; i++) {
+    for (int i = 0; i < m; i++) temp[i] = block[i];
+    for (int i = 0; i < n; i++) alloc[i] = -1;
+
+    for (int i = 0; i < n; i++) {
         int best = -1;
-        for(int j = 0; j < m; j++) {
-            if(blocks[j] >= process[i]) {
-                if(best == -1 || blocks[j] < blocks[best])
+
+        for (int j = 0; j < m; j++) {
+            if (temp[j] >= process[i]) {
+                if (best == -1 || temp[j] < temp[best])
                     best = j;
             }
         }
-        if(best != -1) {
+
+        if (best != -1) {
             alloc[i] = best;
-            blocks[best] -= process[i];
+            temp[best] -= process[i];
         }
     }
 
-    cout << "\n--- Best Fit ---";
-    display(alloc, n);
+    printResult("Best Fit", alloc, n);
+    printRemaining(temp, m);
 }
 
-// Worst Fit
-void worstFit(int blocks[], int m, int process[], int n) {
-    int alloc[10];
-    for(int i = 0; i < n; i++) alloc[i] = -1;
+// ---------------- WORST FIT ----------------
+void worstFit(int block[], int m, int process[], int n) {
+    int alloc[n];
+    int temp[m];
 
-    for(int i = 0; i < n; i++) {
+    for (int i = 0; i < m; i++) temp[i] = block[i];
+    for (int i = 0; i < n; i++) alloc[i] = -1;
+
+    for (int i = 0; i < n; i++) {
         int worst = -1;
-        for(int j = 0; j < m; j++) {
-            if(blocks[j] >= process[i]) {
-                if(worst == -1 || blocks[j] > blocks[worst])
+
+        for (int j = 0; j < m; j++) {
+            if (temp[j] >= process[i]) {
+                if (worst == -1 || temp[j] > temp[worst])
                     worst = j;
             }
         }
-        if(worst != -1) {
+
+        if (worst != -1) {
             alloc[i] = worst;
-            blocks[worst] -= process[i];
+            temp[worst] -= process[i];
         }
     }
 
-    cout << "\n--- Worst Fit ---";
-    display(alloc, n);
+    printResult("Worst Fit", alloc, n);
+    printRemaining(temp, m);
 }
 
-// Next Fit
-void nextFit(int blocks[], int m, int process[], int n) {
-    int alloc[10];
-    for(int i = 0; i < n; i++) alloc[i] = -1;
+// ---------------- NEXT FIT ----------------
+void nextFit(int block[], int m, int process[], int n) {
+    int alloc[n];
+    int temp[m];
 
-    int j = 0;
-    for(int i = 0; i < n; i++) {
+    for (int i = 0; i < m; i++) temp[i] = block[i];
+    for (int i = 0; i < n; i++) alloc[i] = -1;
+
+    int last = 0;
+
+    for (int i = 0; i < n; i++) {
+        int j = last;
         int count = 0;
-        while(count < m) {
-            if(blocks[j] >= process[i]) {
+
+        while (count < m) {
+            if (temp[j] >= process[i]) {
                 alloc[i] = j;
-                blocks[j] -= process[i];
+                temp[j] -= process[i];
+                last = j;
                 break;
             }
             j = (j + 1) % m;
@@ -96,37 +124,110 @@ void nextFit(int blocks[], int m, int process[], int n) {
         }
     }
 
-    cout << "\n--- Next Fit ---";
-    display(alloc, n);
+    printResult("Next Fit", alloc, n);
+    printRemaining(temp, m);
 }
 
+// ---------------- MAIN ----------------
 int main() {
     int m, n;
 
     cout << "Enter number of blocks: ";
     cin >> m;
 
-    int blocks[10];
+    int block[m];
     cout << "Enter block sizes:\n";
-    for(int i = 0; i < m; i++) cin >> blocks[i];
+    for (int i = 0; i < m; i++)
+        cin >> block[i];
 
     cout << "Enter number of processes: ";
     cin >> n;
 
-    int process[10];
+    int process[n];
     cout << "Enter process sizes:\n";
-    for(int i = 0; i < n; i++) cin >> process[i];
+    for (int i = 0; i < n; i++)
+        cin >> process[i];
 
-    // Copy arrays for each algorithm
-    int b1[10], b2[10], b3[10], b4[10];
-    for(int i = 0; i < m; i++) {
-        b1[i] = b2[i] = b3[i] = b4[i] = blocks[i];
-    }
-
-    firstFit(b1, m, process, n);
-    bestFit(b2, m, process, n);
-    worstFit(b3, m, process, n);
-    nextFit(b4, m, process, n);
+    firstFit(block, m, process, n);
+    bestFit(block, m, process, n);
+    worstFit(block, m, process, n);
+    nextFit(block, m, process, n);
 
     return 0;
 }
+/*Algorithm: 
+Start
+Input number of memory blocks (m)
+Input size of each memory block
+Input number of processes (n)
+Input size of each process
+Apply memory allocation using different strategies:
+First Fit
+Best Fit
+Worst Fit
+Next Fit
+For each algorithm:
+Initialize allocation array with -1
+Allocate processes to suitable blocks
+Update remaining block size
+Display:
+Process → Block allocation
+Unallocated processes
+Remaining memory blocks
+Compare results of all algorithms
+End
+Algorithm (Individual Methods)
+
+First Fit
+Start from first block
+Assign first block that is large enough
+Move to next process
+
+Best Fit
+Search all blocks
+Choose smallest block that fits process
+Allocate process
+
+Worst Fit
+Search all blocks
+Choose largest available block
+Allocate process
+
+Next Fit
+Start from last allocated position
+Continue circular search
+Allocate first suitable block found
+
+Sample Input
+Enter number of blocks: 5
+Enter block sizes:
+100 500 200 300 600
+
+Enter number of processes: 4
+Enter process sizes:
+212 417 112 426
+Output
+
+First Fit
+P0 → B1
+P1 → B4
+P2 → B1
+P3 → Not Allocated
+
+Best Fit
+P0 → B2
+P1 → B4
+P2 → B3
+P3 → Not Allocated
+
+Worst Fit
+P0 → B4
+P1 → B1
+P2 → B4
+P3 → Not Allocated
+
+Next Fit
+P0 → B1
+P1 → B4
+P2 → B4
+P3 → Not Allocated*/

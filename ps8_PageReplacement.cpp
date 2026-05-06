@@ -152,3 +152,78 @@ int main() {
 
     return 0;
 }
+/*
+Start
+Input number of pages (n)
+Input page reference string
+Input number of frames (f)
+Initialize frames as empty (-1)
+For each page in reference string:
+Check if page is already in frame
+If YES → Page Hit
+If NO → Page Fault
+Replace page using selected algorithm
+Repeat until all pages are processed
+Count:
+Page faults
+Page hits
+Calculate:
+Fault ratio = faults / total pages
+Hit ratio = hits / total pages
+Display frame status step-by-step
+Compare FIFO, LRU, Optimal results
+End
+ FIFO Algorithm (Simple Steps)
+Use a queue concept
+Replace oldest page in frame
+Insert new page in circular order
+If page already exists → hit
+Else → fault
+ LRU Algorithm
+Track last used time of each page
+If page is not in frame → replace least recently used page
+Update time whenever page is used
+Continue for all pages
+Optimal Algorithm
+Replace page that will not be used for the longest future time
+Check future references of each page in frame
+Choose farthest or never-used page
+Replace it
+Continue until end
+
+Sample Input
+Enter number of pages: 10
+Enter page reference string:
+7 0 1 2 0 3 0 4 2 3
+Enter number of frames: 3
+Sample Output (Example)
+FIFO
+Frame status:
+7 - -
+7 0 -
+7 0 1
+2 0 1
+2 0 1
+2 3 1
+2 3 0
+4 3 0
+4 2 0
+4 2 3
+
+Faults: 7
+Hits: 3
+Fault Ratio: 0.7
+Hit Ratio: 0.3
+
+LRU
+Faults: 6
+Hits: 4
+Fault Ratio: 0.6
+Hit Ratio: 0.4
+
+Optimal
+Faults: 5
+Hits: 5
+Fault Ratio: 0.5
+Hit Ratio: 0.5
+*/
