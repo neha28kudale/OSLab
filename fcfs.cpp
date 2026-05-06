@@ -232,4 +232,5 @@ Number of processes = 4
 P1: AT=0  BT=5  PR=2
 P2: AT=1  BT=3  PR=1
 P3: AT=2  BT=8  PR=4
-P4: AT=3  BT=6  PR=3*/
+P4: AT=3  BT=6  PR=3
+https://github.com/omkar1kadam/OSL-Lab/tree/main/Main_Practical*/
